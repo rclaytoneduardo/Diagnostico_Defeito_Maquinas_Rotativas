@@ -1,0 +1,142 @@
+% Rotor-bearing system simulation
+
+clear
+close all
+clc 
+
+nsim=10;
+a1=0.6; b1=1.4; r1 = a1 + (b1-a1).*rand(nsim,1); % damping_factor
+a2=0.8; b2=1.2; r2 = a2 + (b2-a2).*rand(nsim,1); % disk_thick
+a3=0.7; b3=1.3; r3 = a3 + (b3-a1).*rand(nsim,1); % Bearing_c
+
+
+% set the material parameters
+E = 2.11e11;
+Poisson = 0.3;
+G = E/(2*(1+Poisson));
+rho = 7800;
+rho_disk = 2697;
+damping_factor = 10e-5; % beta
+
+% set the geometric parameters
+shaft_od = 0.01583; %medido 0.015835
+shaft_id = 0;
+shaft_length = 0.91;
+disk_od = 0.15;
+disk_m = 0.654; %massa medida em balança 0.572/0.654
+disk_thick = disk_m/(rho_disk*pi/4*(disk_od^2-shaft_od^2));
+%disk_thick = 12e-3; %12e-3
+
+glove_od = 32e-3;
+glove_thick = 206e-3/(rho*pi/4*(glove_od^2-shaft_od^2));
+
+% mass parameters
+disk_mass = 0.25*rho_disk*pi*disk_thick*(disk_od^2-shaft_od^2);
+disk_weight = disk_mass*9.81;
+shaft_mass = 0.25*rho*pi*shaft_length*(shaft_od^2-shaft_id);
+shaft_weight = shaft_mass*9.81;
+glove_mass = 0.25*rho*pi*glove_thick*(glove_od^2-shaft_od^2);
+glove_weight = glove_mass*9.81;
+
+% nodes from convergence analysis
+nb_ele = 20;
+nb_nodes = nb_ele+1;
+
+% building nodes
+model.node = [(1:nb_nodes).' 1e-3*[0 52.5 105 137.5 170 222.5 275 327.5 380 417.5 455 492.5 530 582.5 635 687.5 740 772.5 805 857.5 910]'];
+
+% building shaft model
+model.shaft = [2*ones(nb_ele,1) (1:nb_ele)' (2:(nb_ele+1))' ones(nb_ele,1)*[shaft_od shaft_id rho E G damping_factor] ];
+
+% building disk model
+disk_node = 9;
+gloveL_node = 5;
+gloveR_node = 17;
+model.disc =  [1 disk_node    rho_disk    disk_thick        disk_od    shaft_od;
+               1 gloveL_node  rho         glove_thick       glove_od   shaft_od;
+               1 gloveR_node  rho         glove_thick       glove_od   shaft_od];
+
+% building bearing model
+Bearing_posL = 3;
+Bearing_posR = 19;
+ 
+Bearing_FR = shaft_weight/2+ disk_weight*(model.node(disk_node,2)-model.node(Bearing_posL,2))/(model.node(Bearing_posR,2)-model.node(Bearing_posL,2))+...
+                glove_weight*(model.node(gloveL_node,2)-model.node(Bearing_posL,2))/(model.node(Bearing_posR,2)-model.node(Bearing_posL,2))+...
+                glove_weight*(model.node(gloveR_node,2)-model.node(Bearing_posL,2))/(model.node(Bearing_posR,2)-model.node(Bearing_posL,2));      % Static force at Right Bearing
+Bearing_FL = shaft_weight + disk_weight + 2*glove_weight - Bearing_FR;                   % Static force at Left Bearing
+Bearing_Tc = 23;      % Oil operation temperature at the bearing (ºC) 23
+Bearing_L = 0.0065; % para L/D < 0.5, real = 0.01155m
+Bearing_D = 15.958e-3; %D: media = 15.9396e-3; max = 15.958e-3; 
+Bearing_c = (Bearing_D-shaft_od)/2; %valor verdadeiro = 5.23e-05 a 6.4e-5
+
+[Bearing_nu] = dynamic_viscosity(Bearing_Tc); % Considering oil ISO VG 68
+
+model.bearing = [7 Bearing_posL  Bearing_FL Bearing_D Bearing_L Bearing_c Bearing_nu; ...
+                 7 Bearing_posR  Bearing_FR Bearing_D Bearing_L Bearing_c Bearing_nu];
+             
+% draw the rotor             
+figure
+picrotor(model)
+          
+% Gravitational force 
+model.gforce = [-9.81]; %[Gravidady_acceleration]
+           
+% Unbalance force
+unb_mag = 1e-3*1.02*0.05; %1.02g e r=0.05m
+model.unbforce = [disk_node unb_mag 0]; %[Disk_node Unbalance_mag Unbalance_phase]
+
+% Crack force
+a_bar = 0.0001;
+model.crackforce = [7 8 a_bar]; %[Node_left  Node_right  crack/shaft_od/2]
+
+% Misalignment force
+model.misforce = [1 0.0001]; % [Misalig_Type(1->angular) teta(degrees)]
+%model.misforce = [2 5e-6 5e-6 0 0]; % [Misalig_Type(2->parallel) dx1 dx2 dy1 dy2]
+
+% Rub force
+model.rubforce = [11 1000 1.0e6 0.2]; %[Node Clearance statot_stiffness frictional_coefficient]
+
+% Acceleration, Speed, Initial position
+% the initial rotor spin speed is 0.1 rad/s
+% acceleration = 24.9 rad/s^2 
+alpha = [24.9 0.1 0]; %alpha = [a v0 s0] alpha real=24.89rad/s2
+delta_t = 1e-4;
+f_time = 15.1;
+tspan = 0:delta_t:f_time;
+nr = 10;  % number of degrees of freedom to retain in the reduced order model
+fs = 1/delta_t;
+
+% Time response
+[time,response,speed, angle] = runup(model,alpha,tspan,nr);
+
+x_dof_resp = 4*(gloveR_node)-3;
+y_dof_resp = 4*(gloveR_node)-2;
+ux = response(x_dof_resp,:);
+vy = response(y_dof_resp,:);
+
+% figure
+% [AX,H1,H2] = plotyy(time,1e3*ux,time,speed/(2*pi));
+% xlabel('Time (s)')
+% ylabel(AX(1),'Response at disk (mm)')
+% ylabel(AX(2),'Rotor speed (Hz)')
+% 
+% figure
+% [AX,H1,H2] = plotyy(time,1e3*vy,time,speed/(2*pi));
+% xlabel('Time (s)')
+% ylabel(AX(1),'Response at disk (mm)')
+% ylabel(AX(2),'Rotor speed (Hz)')
+
+% plot full spectrum cascade response [um]
+matrix = plotspectrum(vy,ux,delta_t,speed/(2*pi)); %[m],[m], [s], [rps]
+
+%  Matrix of Feature 
+%databuilder(matrix);
+
+matrix = plotebode(ux, vy, delta_t, speed/(2*pi), angle); %[m],[m], [s], [rps], [rad]
+
+% ordertrack
+%rpm1 = speed/(2*pi)*60 ;
+% figure()
+% ordertrack(detrend(resample(ux,1,5)),1/delta_t/5,resample(rpm1,1,5),[1 2])
+
+
