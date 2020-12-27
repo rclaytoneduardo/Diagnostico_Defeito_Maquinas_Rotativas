@@ -14,7 +14,10 @@ Você vai precisar usar os seguintes softwares:
  Os códigos-fonte foram organizados da seguinte forma:
  - Classificadores: Neste local foram armazenados os padrões (imagens) para treinamento e teste, obtidos via simulação computacional e ensaios experimentais, e os diferentes métodos de classificação analisados nesse trabalho de pesquisa.  
  - Ensaio_Experimental: Algoritmos para geração dos padrões a partir dos dados obtidos via sistema de aquisição de dados em LabView; 
- - Simulacao_Computacional: Algoritmos para geração dos padrões a partir dos dados obtidos via simualação computacional;
+ - Simulacao_Computacional: Algoritmos para geração dos padrões a partir dos dados obtidos via simulação computacional;
  - Sistema_Aquisicao_Dados: Sistema de aquisição de dados desenvolvido em LabView para coleta dos sinais de vibração e do tacômetro.
  
+ ### Rodando a simulação computacional
  
+ ### Licença
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
