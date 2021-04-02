@@ -1,4 +1,4 @@
-## Software da Dissertação "Aplicação de Aprendizado de Máquina para Classificação de Defeitos em Máquinas Rotativas Usando Espectros das Órbitas"
+<h2 align="center">  Software da Dissertação "Aplicação de Aprendizado de Máquina para Classificação de Defeitos em Máquinas Rotativas Usando Espectros das Órbitas" </h2>
 
 **Autor:** Clayton E. Rodrigues (rclaytoneduardo@gmail.com), ITA  
 **Orientadores:** Cairo L. Nascimento Jr. (cairo@ita.br), Domingos A. Rade (rade@ita.br), ITA.
