@@ -61,13 +61,13 @@ Neste arquivo foram armazenados os padrões (imagens) para treinamento e teste, 
 *   17_AESVM: autocodificador com SVM;
 *   18_AEKNN: autocodificador com kNN.
 
-#### Sistema_Aquisicao_Dados:
-
-Este arquivo contém o código fonte do sistema de aquisição de dados desenvolvido em LabView para coleta dos sinais de vibração e do tacômetro.
-
 #### Simulacao_Computacional:
 
 Este arquivo contém códigos de modelo em elementos finitos de sistema rotor-mancal para geração dos padrões de treinamento e teste a partir da simulação computacional.
+
+#### Sistema_Aquisicao_Dados:
+
+Este arquivo contém o código fonte do sistema de aquisição de dados desenvolvido em LabView para coleta dos sinais de vibração e do tacômetro.
 
 ### Execução da simulação computacional:
 
