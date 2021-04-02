@@ -7,7 +7,7 @@ Dissertação e outras publicações de Clayton E. Rodrigues disponíveis em [ft
 
 ### Resumo:
 
-Os códigos disponibilizados neste diretório (programas/scripts MATLAB e LabView) foram desenvolvidos em um trabalho de pesquisa de análise comparativa do desempenho de diferentes técnicas de aprendizado de máquina para a classificação de defeitos em máquinas rotativas, usando imagens para extração automática das características.
+Os códigos disponibilizados foram desenvolvidos em um trabalho de pesquisa de análise comparativa do desempenho de diferentes técnicas de aprendizado de máquina para a classificação de defeitos em máquinas rotativas, usando imagens para extração automática das características.
 
 Os classificadores propostos neste trabalho foram treinados com dados simulados e testados tanto com dados simulados quanto experimentais.
 
