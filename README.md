@@ -32,18 +32,12 @@ Para execução dos meus programas, foi utilizado um notebook da marca Dell, mod
 
 O código-fonte aqui disponibilizado possui a seguinte estrutura de diretórios:
 
-<pre>- Codigos_LabView
-  |- Vibration Analysis System.zip
-- Codigos_Matlab
-  |- Classificadores.zip
-  |- Simulacao_Rotor.zip
+<pre>- Classificadores
+- Simulacao_Computacional
+- Sistema_Aquisicao_Dados
 </pre>
 
-#### Vibration Analysis System.zip:
-
-Este arquivo contém o código fonte do sistema de aquisição de dados desenvolvido em LabView para coleta dos sinais de vibração e do tacômetro.
-
-#### Classificadores.zip:
+#### Classificadores:
 
 Neste arquivo foram armazenados os padrões (imagens) para treinamento e teste, obtidos via simulação computacional e ensaios experimentais, e os códigos dos diferentes métodos de classificação analisados nesse trabalho de pesquisa. O conteúdo desse arquivo está organizado da seguinte forma:
 
@@ -67,7 +61,11 @@ Neste arquivo foram armazenados os padrões (imagens) para treinamento e teste, 
 *   17_AESVM: autocodificador com SVM;
 *   18_AEKNN: autocodificador com kNN.
 
-#### Simulacao_Rotor.zip:
+#### Sistema_Aquisicao_Dados:
+
+Este arquivo contém o código fonte do sistema de aquisição de dados desenvolvido em LabView para coleta dos sinais de vibração e do tacômetro.
+
+#### Simulacao_Computacional:
 
 Este arquivo contém códigos de modelo em elementos finitos de sistema rotor-mancal para geração dos padrões de treinamento e teste a partir da simulação computacional.
 
